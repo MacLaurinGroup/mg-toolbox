@@ -4,6 +4,6 @@ module.exports = class CodeError extends Error {
         this.name = "CodeError";
         this.code = code;
         this.message = message ? message : null;
-        this.otherData = (otherData) ? otherData : null;
+        this.extra = (otherData) ? otherData : null;
     }
 }

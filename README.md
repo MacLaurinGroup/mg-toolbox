@@ -16,7 +16,7 @@ npm i mg-toolbox --save
 The CodeError is a class that is derived from the standard Error, that adds in a couple of extra parameters for easily identification.
 
 ```
-// new CodeError( code, message, extraData );
+// new CodeError( code, message, extra );
 
 // Usage
 CodeError = require("mg-toolbox/error");
@@ -24,6 +24,9 @@ CodeError = require("mg-toolbox/error");
 try{
   throw new CodeError(21, "Special Error", "Some Other Data");
 }catch(e){
+	if ( e.code == 21 ){
+		// do something
+	}
   log.severe(e, false);
 }
 ```
