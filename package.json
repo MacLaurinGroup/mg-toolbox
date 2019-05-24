@@ -2,7 +2,7 @@
   "name": "mg-toolbox",
   "version": "0.0.1",
   "description": "Small collection of utilities for node/lambda",
-  "main": "./src/index.js",
+  "main": "log.js",
   "scripts": {
     "test": "jasmine"
   },

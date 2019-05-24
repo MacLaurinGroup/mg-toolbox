@@ -38,7 +38,7 @@ log.fine("Sample Log");
 log.log( log.WARNING, "Sample Log");
 ```
 
-Produces the following output: [module][level] message
+Produces the following output: module level message
 
 ```
 [MyModule][WARNING] Sample Log
