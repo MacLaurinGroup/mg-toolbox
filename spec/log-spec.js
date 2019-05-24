@@ -15,7 +15,7 @@ describe("GET", function() {
 
   it("Simple Log Test", async function() {
 
-    log = require("../src/log")("dbOp");
+    log = require("../log")("dbOp");
 
     log.info("1234");
     log.config("CONFIG message");
