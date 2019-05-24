@@ -8,7 +8,6 @@ To get installed, simply use the following:
 npm i mg-toolbox --save
 ```
 
-
 ## Logging
 
 A very thin logging library that is based on the standard Java Logging library, with level control (ALL, SEVERE, WARNING, INFO, CONFIG, FINE, NONE).
@@ -39,7 +38,7 @@ log.fine("Sample Log");
 log.log( log.WARNING, "Sample Log");
 ```
 
-Produces the following output: [<module>][<level>]<message>
+Produces the following output: [module][level] message
 
 ```
 [MyModule][WARNING] Sample Log
