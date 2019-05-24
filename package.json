@@ -1,0 +1,29 @@
+{
+  "name": "mg-toolbox",
+  "version": "1.0.0",
+  "description": "Small collection of utilities for node/lambda",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MacLaurinGroup/mg-toolbox.git"
+  },
+  "keywords": [
+    "node",
+    "lambda",
+    "log"
+  ],
+  "author": "MacLaurin Group",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MacLaurinGroup/mg-toolbox/issues"
+  },
+  "homepage": "https://github.com/MacLaurinGroup/mg-toolbox#readme",
+  "devDependencies": {
+    "jasmine": "^3.4.0",
+    "aws-sdk": "^2.97.0",
+    "eslint": "^5.13.0"
+  }
+}
