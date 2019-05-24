@@ -24,10 +24,11 @@ CodeError = require("mg-toolbox/error");
 try{
   throw new CodeError(21, "Special Error", "Some Other Data");
 }catch(e){
-	if ( e.code == 21 ){
-		// do something
-	}
-  log.severe(e, false);
+  if ( e.code == 21 ){
+    // do something
+  }else{
+    log.severe(e, false);
+  }
 }
 ```
 
