@@ -37,27 +37,27 @@ Object.defineProperty(log, "level", {
     }
 })
 
-log.severe = function(v) {
-    log.log(LEVEL.SEVERE, v);
+log.severe = function(v, st) {
+    log.log(LEVEL.SEVERE, v, st);
 }
 
-log.warning = function(v) {
-    log.log(LEVEL.WARNING, v);
+log.warning = function(v, st) {
+    log.log(LEVEL.WARNING, v, st);
 }
 
-log.info = function(v) {
-    log.log(LEVEL.INFO, v);
+log.info = function(v, st) {
+    log.log(LEVEL.INFO, v, st);
 }
 
-log.config = function(v) {
-    log.log(LEVEL.CONFIG, v);
+log.config = function(v, st) {
+    log.log(LEVEL.CONFIG, v, st);
 }
 
-log.fine = function(v) {
-    log.log(LEVEL.FINE, v);
+log.fine = function(v, st) {
+    log.log(LEVEL.FINE, v, st);
 }
 
-log.log = function(lvl, v) {
+log.log = function(lvl, v, stackTrace) {
     if (typeof lvl == "undefined" && typeof v == "undefined") {
         lvl = LEVEL.INFO;
         v = "undefined";
@@ -66,17 +66,38 @@ log.log = function(lvl, v) {
         lvl = LEVEL.INFO;
     }
 
+
     // Only log from this level and below
     if (lvl < log.l) return;
 
 
     if (typeof v == "object" && v.stack && v.name) {
-        // Handling an ERROR
-        let s = v.stack;
-        if (s.indexOf("   at") > -1)
-            s = s.substring(s.indexOf("    at"));
+        stackTrace = (typeof stackTrace != "undefined") ? stackTrace : true;
 
-        v = "[ERROR] " + v.message + ";\r\n" + s;
+        let b = "";
+        if (v.name == "CodeError") {
+            b = "[CODEERROR][" + v.code + "] " + v.message;
+
+            if (v.otherData != null) {
+                let s = String(v.otherData);
+                if (s == "[object Object]")
+                    b += "; [CUSTOMDATA-JSON] " + JSON.stringify(v.otherData);
+                else
+                    b += "; [CUSTOMDATA] " + s;
+            }
+
+        } else {
+            b = "[ERROR] " + v.message;
+        }
+
+        // Handling an ERROR
+        let s = "";
+        if (stackTrace) {
+            s = v.stack;
+            if (s.indexOf("   at") > -1)
+                s = ";\r\n" + s.substring(s.indexOf("    at"));
+        }
+        v = b + s;
     } else if (typeof v == "object") {
         try {
             s = String(v);

@@ -8,6 +8,27 @@ To get installed, simply use the following:
 npm i mg-toolbox --save
 ```
 
+* CodeError
+* log
+
+## CodeError
+
+The CodeError is a class that is derived from the standard Error, that adds in a couple of extra parameters for easily identification.
+
+```
+// new CodeError( code, message, extraData );
+
+// Usage
+CodeError = require("mg-toolbox/error");
+
+try{
+  throw new CodeError(21, "Special Error", "Some Other Data");
+}catch(e){
+  log.severe(e, false);
+}
+```
+
+
 ## Logging
 
 A very thin logging library that is based on the standard Java Logging library, with level control (ALL, SEVERE, WARNING, INFO, CONFIG, FINE, NONE).
@@ -94,6 +115,38 @@ produces the following output, complete with stack trace.
     at QueueRunner.attempt (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5505:44)
     at QueueRunner.run (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5543:25)
     at runNext (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5469:18)
+```
+
+Sometimes you don't want to see the stack trace; you just want the error logged.   You can control this with the additional parameter to the logger.
+
+```
+try{
+  throw new Error("oops! something has gone wrong");
+}catch(e){
+  log.severe(e, false);
+}
+```
+
+produces this instead:
+
+```
+[MyModule][SEVERE][ERROR] oops! something has gone wrong;
+```
+
+Please note, if you are logging out the CodeError (see below) then you will see the following:
+
+```
+try{
+  throw new CodeError(21, "Special Error", "Some Other Data");
+}catch(e){
+  log.severe(e, false);
+}
+```
+
+produces:
+
+```
+[MyModule][SEVERE][CODEERROR][21] Special Error; [CUSTOMDATA] Some Other Data;
 ```
 
 #### Objects

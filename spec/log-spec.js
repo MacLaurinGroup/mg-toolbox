@@ -16,6 +16,7 @@ describe("GET", function() {
   it("Simple Log Test", async function() {
 
     log = require("../log")("dbOp");
+    CodeError = require("../error");
 
     log.info("1234");
     log.config("CONFIG message");
@@ -33,7 +34,14 @@ describe("GET", function() {
     log.severe({alan:2});
 
     try{
-      throw new Error("fuck me something has gone wrong");
+      throw new Error("WTF! something has gone wrong");
+    }catch(e){
+      log.severe(e, false);
+    }
+
+
+    try{
+      throw new CodeError(21, "Special Error", "Some Other Data");
     }catch(e){
       log.severe(e);
     }
