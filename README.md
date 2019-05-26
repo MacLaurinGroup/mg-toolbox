@@ -8,10 +8,28 @@ To get installed, simply use the following:
 npm i mg-toolbox --save
 ```
 
-* CodeError
+* Error classes
 * log
 
-## CodeError
+## Error Classes
+
+Since Javascript has only real one Error class, it is sometimes hard to be consistent and manage errors.  Not all errors are equal, not all require stack tracing.  A handful of helper Error classes are available:
+
+* CodeError(code, message [,extra])
+* MissingAttributeError(message [, extra])
+* IllegalAttributeError(message [, extra])
+* NotSupportedError(message [, extra])
+* MySQLError(message [, extra])
+
+You can easily wrap an existing Error in one of the above errors for help in processing up stream.
+
+To use a stream, declare which ones you are going to use
+
+```
+const { MissingAttributeError, MySQLError } = require("mg-toolbox/error");
+```
+
+### CodeError
 
 The CodeError is a class that is derived from the standard Error, that adds in a couple of extra parameters for easily identification.
 
@@ -19,7 +37,7 @@ The CodeError is a class that is derived from the standard Error, that adds in a
 // new CodeError( code, message, extra );
 
 // Usage
-CodeError = require("mg-toolbox/error");
+{ CodeError } = require("mg-toolbox/error");
 
 try{
   throw new CodeError(21, "Special Error", "Some Other Data");
@@ -33,6 +51,39 @@ try{
 ```
 
 
+### MySQLError
+
+The MySQLError is a special class for working with the mysql package.  This wraps up the error that it produces into something more accessible.  Particularly useful when used in conjunction with the the logging class of the mg-toolbox.
+
+```
+// new CodeError( code, message, extra );
+
+// Usage
+{ MySQLError } = require("mg-toolbox/error");
+
+try {
+  await this.dbConn.query("INSERT INTO `tableXXX` (`userId`,`object`,`objectId`,`payload`) VALUES (?,?,?,?)", [
+    1,
+    "tt",
+    "21",
+    "{}"
+  ]);
+} catch (e) {
+  log.severe( new MySQLError(e) );
+}
+```
+
+Extra MySQLErrormethods:
+
+* getServerCode()
+** Gets the original MySQL code; for example ER_NO_SUCH_TABLE
+* getSQL()
+** Returns the SQL statement that was attempted
+
+In addition, when printing out this error, the stack trace of the mysql driver is not included, only relative to your code where the error actually originated.
+
+
+
 ## Logging
 
 A very thin logging library that is based on the standard Java Logging library, with level control (ALL, SEVERE, WARNING, INFO, CONFIG, FINE, NONE).
@@ -44,9 +95,15 @@ Like Java, you can namespace your loggers to specific modules, that way when you
 ```
 // Create a standard logger
 log = require("mg-toolbox/log");
+log = new log();
+
 
 // or Create a scoped logger
-log = require("mg-toolbox/log")("MyModule");
+log = require("mg-toolbox/log");
+log = new log("MyModule");
+
+// or short hand with the require
+log = new (require("mg-toolbox/log"))("MyModule");
 ```
 
 Once you have done that you can then simply start using it:
@@ -114,12 +171,14 @@ try{
 produces the following output, complete with stack trace.
 
 ```
-[MyModule][SEVERE][ERROR] oops! something has gone wrong;
+[MyModule][SEVERE][Error] oops! something has gone wrong;
     at UserContext.<anonymous> (/home/mg/mg-toolbox/spec/log-spec.js:37:13)
     at QueueRunner.attempt (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5505:44)
     at QueueRunner.run (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5543:25)
     at runNext (/home/mg/mg-toolbox/node_modules/jasmine-core/lib/jasmine-core/jasmine.js:5469:18)
 ```
+
+#### Look!  No Stack Trace
 
 Sometimes you don't want to see the stack trace; you just want the error logged.   You can control this with the additional parameter to the logger.
 
@@ -150,7 +209,7 @@ try{
 produces:
 
 ```
-[MyModule][SEVERE][CODEERROR][21] Special Error; [CUSTOMDATA] Some Other Data;
+[MyModule][SEVERE][CODEERROR][21] Special Error; [extra] Some Other Data;
 ```
 
 #### Objects
@@ -164,7 +223,7 @@ log.severe({age:2});
 produces the following, with an indication that this was an object, and had to be converted to JSON to render it:
 
 ```
-[MyModule][SEVERE][OBJECT-JSON] {"age":2}
+[MyModule][SEVERE][Obj-JSon] {"age":2}
 ```
 
 It will only attempt to create a JSON output if the original object does not produce anything other than "[object Object]".

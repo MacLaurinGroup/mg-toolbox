@@ -1,120 +1,113 @@
 /**
- * (c) 2019 Maclaurin Group
+ * Logging class
+ *
+ * (c) 2019 MacLaurin Group
  */
-log = function(_module) {
-    log.module = (typeof _module != "undefined") ? _module : null;
-    return log;
-};
 
-const LEVEL = { ALL: 10000, SEVERE: 1000, WARNING: 900, INFO: 800, CONFIG: 700, FINE: 500, NONE: 0 };
-const LABEL = { "1000": "SEVERE", "900": "WARNING", "800": "INFO", "700": "CONFIG", "500": "FINE" };
+module.exports = class log {
 
-log.module = null;
-log.l = 800; // Default it to INFO
+    constructor(_module) {
+        this.module = (typeof _module != "undefined") ? _module : null;
 
-// Set the initial ones
-if (process.env.LOG && LEVEL[process.env.LOG]) {
-    log.l = LEVEL[process.env.LOG];
-}
+        this.ALL = 10000;
+        this.SEVERE = 1000;
+        this.WARNING = 900;
+        this.INFO = 800;
+        this.CONFIG = 700;
+        this.FINE = 500;
+        this.NONE = 0;
 
-// Override; we are logging everything
-if (process.env.LOG_DEBUG) {
-    log.l = LEVEL.FINE;
-}
+        this.level = this.INFO;
 
-for (const key in LEVEL) {
-    log[key] = LEVEL[key];
-}
+        const LEVEL = { ALL: 10000, SEVERE: 1000, WARNING: 900, INFO: 800, CONFIG: 700, FINE: 500, NONE: 0 };
+        if (process.env.LOG && LEVEL[process.env.LOG]) {
+            this.level = LEVEL[process.env.LOG];
+        }
 
-Object.defineProperty(log, "level", {
-    get: function() { return log.l; },
-    set: function(n) {
-        for (const key in LEVEL) {
-            if (LEVEL[key] == Number(n)) {
-                log.l = Number(n);
-            }
+        // Override; we are logging everything
+        if (process.env.LOG_DEBUG) {
+            this.level = LEVEL.FINE;
         }
     }
-})
 
-log.severe = function(v, st) {
-    log.log(LEVEL.SEVERE, v, st);
-}
 
-log.warning = function(v, st) {
-    log.log(LEVEL.WARNING, v, st);
-}
-
-log.info = function(v, st) {
-    log.log(LEVEL.INFO, v, st);
-}
-
-log.config = function(v, st) {
-    log.log(LEVEL.CONFIG, v, st);
-}
-
-log.fine = function(v, st) {
-    log.log(LEVEL.FINE, v, st);
-}
-
-log.log = function(lvl, v, stackTrace) {
-    if (typeof lvl == "undefined" && typeof v == "undefined") {
-        lvl = LEVEL.INFO;
-        v = "undefined";
-    } else if (typeof v == "undefined") {
-        v = lvl;
-        lvl = LEVEL.INFO;
+    severe(v, st) {
+        this.log(this.SEVERE, v, st);
     }
 
+    warning(v, st) {
+        this.log(this.WARNING, v, st);
+    }
 
-    // Only log from this level and below
-    if (lvl < log.l) return;
+    info(v, st) {
+        this.log(this.INFO, v, st);
+    }
 
+    config(v, st) {
+        this.log(this.CONFIG, v, st);
+    }
 
-    if (typeof v == "object" && v.stack && v.name) {
-        stackTrace = (typeof stackTrace != "undefined") ? stackTrace : true;
+    fine(v, st) {
+        this.log(this.FINE, v, st);
+    }
 
-        let b = "";
-        if (v.name == "CodeError") {
-            b = "[CODEERROR][" + v.code + "] " + v.message;
+    log(lvl, v, stackTrace) {
+        if (typeof lvl == "undefined" && typeof v == "undefined") {
+            lvl = this.INFO;
+            v = "undefined";
+        } else if (typeof v == "undefined") {
+            v = lvl;
+            lvl = this.INFO;
+        }
 
-            if (v.otherData != null) {
-                let s = String(v.otherData);
+        // Only log from this level and below
+        if (lvl < this.level) return;
+
+        if (typeof v == "object" && v.stack && v.name) {
+            stackTrace = (typeof stackTrace != "undefined") ? stackTrace : true;
+
+            let b = "";
+            if (v.code && v.message && v.extra) {
+                b = "[" + v.name + "][" + v.code + "] " + v.message;
+
+                if (v.extra != null) {
+                    let s = String(v.extra);
+                    if (s == "[object Object]")
+                        b += "; [extra-Json] " + JSON.stringify(v.extra);
+                    else
+                        b += "; [extra] " + s;
+                }
+
+            } else {
+                b = "[Error] " + v.message;
+            }
+
+            // Handling an ERROR
+            let s = "";
+            if (stackTrace) {
+                s = v.stack;
+                if (s.indexOf("   at") > -1)
+                    s = ";\r\n" + s.substring(s.indexOf("    at"));
+            }
+            v = b + s;
+        } else if (typeof v == "object") {
+            try {
+                const s = String(v);
                 if (s == "[object Object]")
-                    b += "; [CUSTOMDATA-JSON] " + JSON.stringify(v.otherData);
+                    v = "[Obj-JSon] " + JSON.stringify(v);
                 else
-                    b += "; [CUSTOMDATA] " + s;
+                    v = s;
+            } catch (e) {
+                console.log(e)
+                v = "[Obj] " + v;
             }
-
         } else {
-            b = "[ERROR] " + v.message;
+            v = " " + v;
         }
 
-        // Handling an ERROR
-        let s = "";
-        if (stackTrace) {
-            s = v.stack;
-            if (s.indexOf("   at") > -1)
-                s = ";\r\n" + s.substring(s.indexOf("    at"));
-        }
-        v = b + s;
-    } else if (typeof v == "object") {
-        try {
-            s = String(v);
-            if (s == "[object Object]")
-                v = "[OBJECT-JSON] " + JSON.stringify(v);
-            else
-                v = s;
-        } catch (e) {
-            v = "[OBJECT] " + v;
-        }
-    } else {
-        v = " " + v;
+        const a = (this.module != null) ? "[" + this.module + "]" : "";
+        console.log(a + "[" + LABEL[lvl] + "]" + v);
     }
-
-    const a = (log.module != null) ? "[" + log.module + "]" : "";
-
-    console.log(a + "[" + LABEL[lvl] + "]" + v);
 }
 
-module.exports = log;
+const LABEL = { "1000": "SEVERE", "900": "WARNING", "800": "INFO", "700": "CONFIG", "500": "FINE" };

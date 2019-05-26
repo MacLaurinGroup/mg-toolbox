@@ -15,8 +15,10 @@ describe("GET", function() {
 
   it("Simple Log Test", async function() {
 
-    log = require("../log")("dbOp");
-    CodeError = require("../error");
+    log = require("../log");
+    log = new log("TST");
+
+    const { CodeError } = require("../error");
 
     log.info("1234");
     log.config("CONFIG message");
@@ -47,5 +49,31 @@ describe("GET", function() {
     }
 
   });
+
+  //---------------------------------------
+
+  it("Another scope", async function() {
+
+    log = require("../log");
+    log = new log("Tst2");
+
+    log.info("INFO message");
+    log.config("CONFIG message");
+    log.severe("SEVERE message");
+
+  });
+
+  //---------------------------------------
+
+  it("Another scope2", async function() {
+
+    log = new (require("../log"))("abc");
+
+    log.info("INFO message");
+    log.config("CONFIG message");
+    log.severe("SEVERE message");
+
+  });
+
 
 });
