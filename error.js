@@ -62,7 +62,7 @@ class MySQLError extends CodeError {
 
 class NotSupportedError extends CodeError {
 	constructor(message, attribute) {
-		super(403, message, attribute);
+		super(403, (typeof message == "undefined") ? "Not Supported" : message, attribute);
 		this.name = "NotSupportedError";
 	}
 }
