@@ -47,7 +47,7 @@ describe("sanitizer", function() {
 
   //---------------------------------------
 
-  it("Basic String Test", function() {
+  it("Basic Map Test", function() {
 
     const options = {
       toLowerCase : true,
@@ -64,6 +64,33 @@ describe("sanitizer", function() {
     expect( outData.a ).toBe("&lt;h1&gt;hello&lt;/h1&gt;");
     expect( outData.b ).toBe("&lt;h1&gt;hello&lt;/h1&gt;");
     expect( outData.c ).toBe("<h1>Hello</h1>");
+
+  });
+
+  //---------------------------------------
+
+  it("Basic Map Test 2", function() {
+
+    const options = {
+      toLowerCase : true,
+      encode : true
+    };
+    let inData = {
+      a : "<h1>Hello</h1>",
+      b : "<h1>Hello</h1>",
+      c : "<h1>Hello</h1>",
+      d : 12,
+      e : "45",
+      f : null
+    }, outData;
+
+    outData = sanitizer.filter(inData,options);
+    expect( outData.a ).toBe("&lt;h1&gt;hello&lt;/h1&gt;");
+    expect( outData.b ).toBe("&lt;h1&gt;hello&lt;/h1&gt;");
+    expect( outData.c ).toBe("&lt;h1&gt;hello&lt;/h1&gt;");
+    expect( outData.d ).toBe(12);
+    expect( outData.e ).toBe("45");
+    expect( outData.f ).toBe(null);
 
   });
 });

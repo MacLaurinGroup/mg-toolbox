@@ -6,6 +6,9 @@
   "scripts": {
     "test": "jasmine"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MacLaurinGroup/mg-toolbox.git"
