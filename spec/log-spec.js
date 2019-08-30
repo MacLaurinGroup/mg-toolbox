@@ -1,5 +1,4 @@
 describe("GET", function() {
-  let dbConn;
 
   //---------------------------------------
 
@@ -24,11 +23,7 @@ describe("GET", function() {
     log.config("CONFIG message");
     log.severe("SEVERE message");
 
-    console.log( "log.INFO=" + log.INFO );
-    console.log( "log.level=" + log.level );
-
     log.level = log.SEVERE;
-    console.log( "log.level=" + log.level );
     log.severe("SEVERE message2");
     log.info("INFO");
     log.log("alan");

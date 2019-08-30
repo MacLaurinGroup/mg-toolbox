@@ -1,6 +1,6 @@
 # mg-toolbox
 
-Small collection of utilities for node/lambda development; custom errors, logging
+Small collection of utilities for node/lambda development; custom errors, logging and string sanitization.
 
 To get installed, simply use the following:
 
@@ -227,3 +227,54 @@ produces the following, with an indication that this was an object, and had to b
 ```
 
 It will only attempt to create a JSON output if the original object does not produce anything other than "[object Object]".
+
+## Sanitization
+
+This is a simple function that will clean up strings, and objects, of various filters.
+
+```
+options = {
+  toLowerCase : true|false,  // default=false; lower cases the string
+  encode : true|false,       // default=true; Encodes < > ' " to the HTML entity; otherwise removes them
+  az09 : true|false,         // default=false; only permit a-z, A-Z, 0-9 and - in the string
+  az09_ : true|false,        // default=false; only permit a-z, A-Z, 0-9 and - _ in the string
+  fields : []                // If a map is passed in, then the list of fields to which this filter is applied; all if empty
+}
+```
+
+* Can process a map of objects (typically a FORM post for example)
+* Will ignore any non-string field, or null values
+
+
+### Usage
+
+```
+const sanitizer = require("mg-toolbox/sanitizer");
+
+const options = {
+  toLowerCase : true
+};
+
+inData = "<h1>Hello</h1>";
+outData = sanitizer.filter(inData, options);
+// outData = &lt;h1&gt;hello&lt;/h1&gt;
+```
+
+Looping over an object
+
+```
+const sanitizer = require("mg-toolbox/sanitizer");
+
+const options = {
+  toLowerCase : true,
+  encode : false,
+  fields : ["a","b"]
+};
+
+inData = "<h1>Hello</h1>";
+outData = sanitizer.filter({
+      a : "<h1>Hello</h1>",
+      b : "<h1>Hello</h1>",
+      c : "<h1>Hello</h1>"
+    }, options);
+```

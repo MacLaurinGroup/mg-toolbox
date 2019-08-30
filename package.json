@@ -1,7 +1,7 @@
 {
   "name": "mg-toolbox",
-  "version": "0.0.7",
-  "description": "Small collection of utilities for node/lambda",
+  "version": "0.0.8",
+  "description": "Small collection of utilities (logging, exceptions and sanitization) for node/lambda",
   "main": "log.js",
   "scripts": {
     "test": "jasmine"
@@ -24,6 +24,6 @@
   "devDependencies": {
     "jasmine": "^3.4.0",
     "aws-sdk": "^2.97.0",
-    "eslint": "^5.13.0"
+    "eslint": ">=5.13.0"
   }
 }
