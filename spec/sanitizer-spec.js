@@ -47,6 +47,15 @@ describe("sanitizer", function() {
 
   //---------------------------------------
 
+  it("Basic String Test 2", function() {
+    let inData, outData;
+    inData = "<h1>Hello</h1>";
+    outData = sanitizer.filter(inData);
+    expect( outData ).toBe("&lt;h1&gt;Hello&lt;/h1&gt;");
+  });
+
+  //---------------------------------------
+
   it("Basic Map Test", function() {
 
     const options = {

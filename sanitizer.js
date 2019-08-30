@@ -7,6 +7,7 @@ module.exports = {
 
   filter: function (data, options) {
     // Default the options
+    options = options || {};
     options.fields = options.fields || [];
     options.fieldsIgnored = options.fieldsIgnored || [];
     options.toLowerCase = options.toLowerCase || false;
