@@ -1,6 +1,6 @@
 {
   "name": "mg-toolbox",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Small collection of utilities (logging, exceptions and sanitization) for node/lambda",
   "main": "log.js",
   "scripts": {

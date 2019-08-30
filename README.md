@@ -244,7 +244,8 @@ options = {
 ```
 
 * Can process a map of objects (typically a FORM post for example)
-* Will ignore any non-string field, or null values
+* Ignores numbers, booleans
+* Crawls through inner objects/arrays filtering
 
 
 ### Usage
