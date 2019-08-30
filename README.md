@@ -238,7 +238,8 @@ options = {
   encode : true|false,       // default=true; Encodes < > ' " to the HTML entity; otherwise removes them
   az09 : true|false,         // default=false; only permit a-z, A-Z, 0-9 and - in the string
   az09_ : true|false,        // default=false; only permit a-z, A-Z, 0-9 and - _ in the string
-  fields : []                // If a map is passed in, then the list of fields to which this filter is applied; all if empty
+  fields : [],               // If a map is passed in, then the list of fields to which this filter is applied; all if empty
+  fieldsIgnored : []         // If a map is passed in, then the list of fields to not touch
 }
 ```
 

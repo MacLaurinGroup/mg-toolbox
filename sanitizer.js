@@ -8,6 +8,7 @@ module.exports = {
   filter: function (data, options) {
     // Default the options
     options.fields = options.fields || [];
+    options.fieldsIgnored = options.fieldsIgnored || [];
     options.toLowerCase = options.toLowerCase || false;
     options.encode = options.encode || true;
     options.az09 = options.az09 || false;
@@ -16,7 +17,9 @@ module.exports = {
     if (data !== null && typeof data === "object") {
       for (const field in data) {
         if (options.fields.length === 0 || options.fields.includes(field)) {
-          data[field] = _filter(data[field], options);
+          if ( options.fieldsIgnored.length === 0 || !options.fieldsIgnored.includes(field) ){
+            data[field] = _filter(data[field], options);
+          }
         }
       }
     } else {
